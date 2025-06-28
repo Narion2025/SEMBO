@@ -1,0 +1,70 @@
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - force_cast
+  - force_try
+
+opt_in_rules:
+  - empty_count
+  - closure_spacing
+  - collection_alignment
+  - contains_over_first_not_nil
+  - empty_string
+  - first_where
+  - let_var_whitespace
+  - literal_expression_end_indentation
+  - multiline_arguments
+  - multiline_parameters
+  - operator_usage_whitespace
+  - prefer_self_type_over_type_of_self
+  - sorted_first_last
+  - yoda_condition
+
+excluded:
+  - .build
+  - DerivedData
+  - Tests/UITests
+
+line_length:
+  warning: 120
+  error: 200
+  ignores_comments: true
+
+type_body_length:
+  warning: 300
+  error: 500
+
+file_length:
+  warning: 500
+  error: 1000
+
+function_body_length:
+  warning: 50
+  error: 100
+
+cyclomatic_complexity:
+  warning: 10
+  error: 20
+
+nesting:
+  type_level:
+    warning: 2
+  function_level:
+    warning: 3
+
+identifier_name:
+  min_length:
+    warning: 2
+  max_length:
+    warning: 40
+  excluded:
+    - id
+    - URL
+    - UI
+
+custom_rules:
+  mark_spacing:
+    name: "MARK Spacing"
+    regex: '\/\/ MARK: -?[^\n]*(\n)(?!\n)'
+    message: "Add empty line after MARK comment"
+    severity: warning 

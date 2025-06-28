@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: macos-13
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+    
+    - name: Cache Swift Package Manager
+      uses: actions/cache@v3
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+    
+    - name: Resolve Dependencies
+      run: swift package resolve
+    
+    - name: Build
+      run: swift build -v
+    
+    - name: Run Unit Tests
+      run: swift test -v --enable-code-coverage
+    
+    - name: Generate Coverage Report
+      run: |
+        xcrun llvm-cov export \
+          .build/debug/MarkerBookPackageTests.xctest/Contents/MacOS/MarkerBookPackageTests \
+          -instr-profile .build/debug/codecov/default.profdata \
+          -format="lcov" > coverage.lcov
+    
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.lcov
+        flags: unittests
+        name: codecov-umbrella
+    
+    - name: SwiftLint
+      run: |
+        brew install swiftlint
+        swiftlint --reporter github-actions-logging
+
+  ui-test:
+    name: UI Tests
+    runs-on: macos-13
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+    
+    - name: Build for Testing
+      run: |
+        xcodebuild build-for-testing \
+          -scheme MarkerBook \
+          -destination 'platform=macOS' \
+          -derivedDataPath DerivedData
+    
+    - name: Run UI Tests
+      run: |
+        xcodebuild test-without-building \
+          -scheme MarkerBook \
+          -destination 'platform=macOS' \
+          -derivedDataPath DerivedData \
+          -resultBundlePath TestResults
+    
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: test-results
+        path: TestResults
+
+  build-release:
+    name: Build Release
+    runs-on: macos-13
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Setup Xcode
+      uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '15.0'
+    
+    - name: Build Release
+      run: |
+        swift build -c release
+    
+    - name: Create Archive
+      run: |
+        mkdir -p build
+        cp -r .build/release/MarkerBook build/
+        cd build
+        zip -r MarkerBook.zip MarkerBook
+    
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: MarkerBook-macOS
+        path: build/MarkerBook.zip
+        retention-days: 30 

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    
+    <!-- Marker Entity -->
+    <entity name="Marker" representedClassName="Marker" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="markerName" attributeType="String"/>
+        <attribute name="definition" attributeType="String"/>
+        <attribute name="ankerbeispiel" attributeType="String"/>
+        <attribute name="kodierregelnAbgrenzung" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="tags" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer" customClassName="[String]"/>
+        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="markers" inverseEntity="Category"/>
+        <relationship name="examples" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MarkerExample" inverseName="marker" inverseEntity="Marker"/>
+        <relationship name="codings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Coding" inverseName="marker" inverseEntity="Coding"/>
+    </entity>
+    
+    <!-- MarkerExample Entity -->
+    <entity name="MarkerExample" representedClassName="MarkerExample" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="text" attributeType="String"/>
+        <attribute name="kontext" optional="YES" attributeType="String"/>
+        <attribute name="beziehungstyp" optional="YES" attributeType="String"/>
+        <attribute name="subtilitaet" optional="YES" attributeType="Integer 16" defaultValueString="3" usesScalarValueType="YES"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="marker" maxCount="1" deletionRule="Nullify" destinationEntity="Marker" inverseName="examples" inverseEntity="Marker"/>
+    </entity>
+    
+    <!-- Category Entity -->
+    <entity name="Category" representedClassName="Category" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="beschreibung" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="markers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Marker" inverseName="category" inverseEntity="Marker"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="subcategories" inverseEntity="Category"/>
+        <relationship name="subcategories" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Category" inverseName="parent" inverseEntity="Category"/>
+    </entity>
+    
+    <!-- Project Entity -->
+    <entity name="Project" representedClassName="Project" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="beschreibung" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="project" inverseEntity="Document"/>
+    </entity>
+    
+    <!-- Document Entity -->
+    <entity name="Document" representedClassName="Document" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="content" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="project" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="documents" inverseEntity="Project"/>
+        <relationship name="codings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Coding" inverseName="document" inverseEntity="Coding"/>
+    </entity>
+    
+    <!-- Coding Entity -->
+    <entity name="Coding" representedClassName="Coding" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="textSegment" attributeType="String"/>
+        <attribute name="startIndex" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="endIndex" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="document" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="codings" inverseEntity="Document"/>
+        <relationship name="marker" maxCount="1" deletionRule="Nullify" destinationEntity="Marker" inverseName="codings" inverseEntity="Marker"/>
+    </entity>
+    
+</model> 
