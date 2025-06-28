@@ -15,7 +15,6 @@ public class Marker: NSManagedObject {
     @NSManaged public var category: Category?
     @NSManaged public var examples: Set<MarkerExample>?
     @NSManaged public var codings: Set<Coding>?
-    @NSManaged public var codingsMany: Set<Coding>?
     
     override public func awakeFromInsert() {
         super.awakeFromInsert()
@@ -87,7 +86,7 @@ public class Document: NSManagedObject {
     @NSManaged public var name: String
     @NSManaged public var content: String
     @NSManaged public var createdAt: Date
-    @NSManaged public var project: Project
+    @NSManaged public var project: Project?
     @NSManaged public var codings: Set<Coding>?
     @NSManaged public var originalFilename: String?
     @NSManaged public var importDate: Date?
@@ -116,7 +115,6 @@ public class Coding: NSManagedObject {
     @NSManaged public var endIndex: Int32
     @NSManaged public var createdAt: Date
     @NSManaged public var document: Document
-    @NSManaged public var marker: Marker
     @NSManaged public var markers: Set<Marker>
     @NSManaged public var memos: Set<Memo>?
     
@@ -148,7 +146,7 @@ public class MetaMarker: NSManagedObject {
     @NSManaged public var id: UUID
     @NSManaged public var name: String
     @NSManaged public var beschreibung: String?
-    @NSManaged public var zutaten: [String] // Marker-Namen als Strings
+    @NSManaged public var zutaten: [String]?
     @NSManaged public var threshold: Int16
     @NSManaged public var project: Project
     

@@ -4,7 +4,7 @@ import CoreData
 
 /// Service zum Importieren von Textdokumenten in das Core-Data-Modell.
 /// Unterstützt .txt und .md (UTF-8).
-class DocumentImportService {
+class DocumentImportService: ObservableObject {
     enum ImportError: LocalizedError {
         case unsupportedType
         case readFailed
