@@ -37,13 +37,15 @@ class PersistenceController {
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "MarkerBookModel")
         
+        let description = container.persistentStoreDescriptions.first!
         if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+            description.url = URL(fileURLWithPath: "/dev/null")
         } else {
-            // Speicherort für die Datenbank festlegen
-            let storeURL = getDocumentsDirectory().appendingPathComponent("MarkerBook.sqlite")
-            container.persistentStoreDescriptions.first!.url = storeURL
+            description.url = getDocumentsDirectory().appendingPathComponent("MarkerBook.sqlite")
         }
+        // Lightweight-Migration aktivieren
+        description.shouldMigrateStoreAutomatically = true
+        description.shouldInferMappingModelAutomatically = true
         
         container.loadPersistentStores { (storeDescription, error) in
             if let error = error as NSError? {
