@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="2.0">
     
     <!-- Marker Entity -->
     <entity name="Marker" representedClassName="Marker" syncable="YES">
@@ -12,8 +12,8 @@
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="tags" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer" customClassName="[String]"/>
         <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="markers" inverseEntity="Category"/>
-        <relationship name="examples" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MarkerExample" inverseName="marker" inverseEntity="Marker"/>
-        <relationship name="codings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Coding" inverseName="marker" inverseEntity="Coding"/>
+        <relationship name="examples" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MarkerExample" inverseName="marker" inverseEntity="MarkerExample"/>
+        <relationship name="codings" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Coding" inverseName="markers" inverseEntity="Coding"/>
     </entity>
     
     <!-- MarkerExample Entity -->
@@ -46,6 +46,7 @@
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="documents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Document" inverseName="project" inverseEntity="Document"/>
+        <relationship name="metaMarkers" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MetaMarker" inverseName="project" inverseEntity="MetaMarker"/>
     </entity>
     
     <!-- Document Entity -->
@@ -54,6 +55,11 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="content" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="originalFilename" optional="YES" attributeType="String"/>
+        <attribute name="importDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="textLength" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="language" optional="YES" attributeType="String"/>
+        <attribute name="codingStatusRaw" optional="YES" attributeType="String"/>
         <relationship name="project" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="documents" inverseEntity="Project"/>
         <relationship name="codings" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Coding" inverseName="document" inverseEntity="Coding"/>
     </entity>
@@ -66,7 +72,26 @@
         <attribute name="endIndex" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="document" maxCount="1" deletionRule="Nullify" destinationEntity="Document" inverseName="codings" inverseEntity="Document"/>
-        <relationship name="marker" maxCount="1" deletionRule="Nullify" destinationEntity="Marker" inverseName="codings" inverseEntity="Marker"/>
+        <relationship name="markers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Marker" inverseName="codings" inverseEntity="Marker"/>
+        <relationship name="memos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Memo" inverseName="coding" inverseEntity="Memo"/>
+    </entity>
+    
+    <!-- Memo Entity -->
+    <entity name="Memo" representedClassName="Memo" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="text" attributeType="String"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="coding" maxCount="1" deletionRule="Nullify" destinationEntity="Coding" inverseName="memos" inverseEntity="Coding"/>
+    </entity>
+    
+    <!-- MetaMarker Entity -->
+    <entity name="MetaMarker" representedClassName="MetaMarker" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <attribute name="beschreibung" optional="YES" attributeType="String"/>
+        <attribute name="zutaten" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer" customClassName="[String]"/>
+        <attribute name="threshold" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="YES"/>
+        <relationship name="project" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="metaMarkers" inverseEntity="Project"/>
     </entity>
     
 </model> 
